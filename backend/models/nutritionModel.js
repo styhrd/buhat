@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import Food from './Food';  // Import the Food model
+import Profile from './Profile';  // Import the Profile model
 
 const nutritionSchema = new mongoose.Schema({
     date: {
@@ -13,14 +15,11 @@ const nutritionSchema = new mongoose.Schema({
         default: 0  // Will be calculated from foodLogs
     },
 
-    foodLogs: {
-        type: [{
-            name: String,
-            calories: Number
-        }],
-        required: true,
-        default: []
-    },
+    foodLogs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Food',  // Reference the Food model
+        required: true
+    }],
 
     status: {
         type: String,
@@ -28,24 +27,64 @@ const nutritionSchema = new mongoose.Schema({
         required: true
     },
 
-    savedFoods: {
-        type: [{
-            name: String,
-            calories: Number
-        }],
+    savedFoods: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Food',  // Reference the Food model
         default: []
-    },
+    }],
 
     calorieMaintenance: {
         type: Number,
         required: true  // This will be calculated based on user profile
+    },
+
+    // Reference the user's profile
+    profile: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Profile',
+        required: true
     }
 });
 
-// Add a pre-save hook to calculate caloriesConsumed and update status based on calorieMaintenance
-nutritionSchema.pre('save', function (next) {
+// Example pre-save hook for calculating caloriesConsumed and calorieMaintenance
+nutritionSchema.pre('save', async function (next) {
+    // Populate foodLogs to access calories from referenced Food documents
+    await this.populate('foodLogs').execPopulate();
+
     // Calculate total calories consumed from foodLogs
     this.caloriesConsumed = this.foodLogs.reduce((total, food) => total + food.calories, 0);
+
+    // Populate the user's profile to access age, weight, height, and activityLevel
+    const profile = await Profile.findById(this.profile);
+
+    if (!profile) {
+        return next(new Error('Profile not found'));
+    }
+
+    // Calculate calorieMaintenance based on the user's profile
+    const { age, weight, height, activityLevel } = profile;
+
+    // Example formula for calorie maintenance calculation (Harris-Benedict Equation)
+    const bmr = 10 * weight + 6.25 * height - 5 * age + 5; // BMR for men
+    let activityMultiplier = 1.2;  // Default for 'no exercise'
+
+    switch (activityLevel) {
+        case 'light':
+            activityMultiplier = 1.375;
+            break;
+        case 'moderate':
+            activityMultiplier = 1.55;
+            break;
+        case 'active':
+            activityMultiplier = 1.725;
+            break;
+        case 'very active':
+            activityMultiplier = 1.9;
+            break;
+    }
+
+    // Calculate calorieMaintenance
+    this.calorieMaintenance = bmr * activityMultiplier;
 
     // Determine status based on calorieMaintenance and caloriesConsumed
     if (this.caloriesConsumed > this.calorieMaintenance) {
