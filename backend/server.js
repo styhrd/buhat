@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import cron from 'node-cron'
 import Nutrition from "./models/nutritionModel.js";
 import authRoutes from './routes/authRoutes.js'
+import errorMiddleware from "./middleware/errorMiddleware.js";
 
 dotenv.config();
 connectDB()
@@ -20,6 +21,9 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
 app.use("/api/v1/auth", authRoutes)
+
+
+app.use(errorMiddleware)
 
 
 app.listen(PORT, () => {
