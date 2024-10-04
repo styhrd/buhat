@@ -29,15 +29,15 @@ const userSchema = new mongoose.Schema({
         ref: 'Nutrition'
     },
 
-    workoutsId: {
+    workoutsIds: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Workouts'
-    },
+        ref: 'Workouts'  // Reference to the Workouts model
+    }],
 
-    runningId: {
+    runningIds: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Running'
-    },
+        ref: 'Running'  // Reference to the Running model
+    }],
 
     communityId: {
         type: mongoose.Schema.Types.ObjectId,
