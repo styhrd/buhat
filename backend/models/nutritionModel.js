@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import Food from './Food';  // Import the Food model
-import Profile from './Profile';  // Import the Profile model
+import Profile from './profileModel.js';  // Import the Profile model
 
 const nutritionSchema = new mongoose.Schema({
     date: {
@@ -11,20 +10,17 @@ const nutritionSchema = new mongoose.Schema({
 
     caloriesConsumed: {
         type: Number,
-        required: true,
         default: 0  // Will be calculated from foodLogs
     },
 
     foodLogs: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Food',  // Reference the Food model
-        required: true
     }],
 
     status: {
         type: String,
         enum: ['Overeat', 'Undereat', 'Just Right'],
-        required: true
     },
 
     savedFoods: [{
