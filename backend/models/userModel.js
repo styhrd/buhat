@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import JWT from 'jsonwebtoken'
 
 const userSchema = new mongoose.Schema({
 
@@ -46,4 +47,10 @@ const userSchema = new mongoose.Schema({
 
 });
 
+//JSON
+userSchema.methods.createJWT = function () {
+    return JWT.sign({ userId: this._id }, process.env.JWT_SECRET, { expiresIn: "1d" })
+}
+
 export default mongoose.model("User", userSchema)
+
