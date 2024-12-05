@@ -32,3 +32,29 @@ export const createWorkout = async (req, res, next) => {
         next(error)
     }
 }
+
+export const updateWorkout = async (req, res, next)=>{
+    try {
+        const { target, name } = req.body
+        const workoutId = req.params.workoutId
+
+        let workout = await Workout.findById(workoutId)
+
+        if (!workout) {
+            return res.status(404).json({ message: "Workout not found" });
+        }
+
+        if (target) {
+            workout.target=target
+        }
+        if (name) {
+            workout.name=name
+        }
+
+        workout = await workout.save()
+        
+        res.status(200).json({workout})
+    } catch (error) {
+        next(error)
+    }
+}
