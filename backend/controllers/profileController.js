@@ -73,3 +73,20 @@ export const updateProfile = async (req, res, next) => {
         next(error);
     }
 };
+
+
+export const getProfile = async (req, res, next) => {
+    try {
+        const userId = req.user.userId
+
+        const profile = await Profile.findOne({ createdBy: userId })
+        
+        if (!profile) {
+            return res.status(404).json({message:"Profile not Found"})
+        }
+
+        res.status(200).json({profile})
+    } catch (error) {
+        next(error)
+    }
+}
