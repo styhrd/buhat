@@ -99,3 +99,61 @@ export const getWorkout = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getAllWorkouts = async (req, res, next) => {
+    try {
+        const userId = req.user.userId
+
+        const workouts = await Workout.find({ createdBy: userId })
+        
+        if (workouts.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: "No workouts found",
+                data: [],
+            });
+        }
+
+
+        res.status(200).json({
+            success: true,
+            message: "Workouts retrieved successfully",
+            data: workouts,
+        });
+
+
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const deleteWorkout = async (req, res, next) => {
+    try {
+        const { workoutId } = req.params
+        const userId = req.user.userId
+        const workout = await Workout.findOne({_id: workoutId})
+        
+        if (!workout) {
+             return res.status(404).json({
+                success: false,
+                message: "Workout not found",
+            });
+        }
+        
+        await workout.deleteOne()
+        await User.findByIdAndUpdate(
+            userId, 
+            { $pull: { workoutsIds: workoutId } }
+        );
+
+
+        res.status(200).json({
+            success: true,
+            message: "Workout Deleted successfully",
+        });
+
+    } catch (error) {
+        next(error)
+    }
+}
