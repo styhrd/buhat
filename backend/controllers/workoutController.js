@@ -35,7 +35,7 @@ export const createWorkout = async (req, res, next) => {
 
 export const updateWorkout = async (req, res, next)=>{
     try {
-        const { target, name } = req.body
+        const { target, name,visibility } = req.body
         const workoutId = req.params.workoutId
 
         let workout = await Workout.findById(workoutId)
@@ -51,8 +51,30 @@ export const updateWorkout = async (req, res, next)=>{
             workout.name=name
         }
 
+        if (visibility) {
+            workout.visibility=visibility
+        }
+
         workout = await workout.save()
         
+        res.status(200).json({
+            workout
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getWorkout = async (req, res, next) => {
+    try {
+        const workoutId = req.params.workoutId
+
+        const workout = await Workout.findById(workoutId)
+
+        if (!workout) {
+            return res.status(404).json({message:"Workout not Found"})
+        }
+
         res.status(200).json({workout})
     } catch (error) {
         next(error)
