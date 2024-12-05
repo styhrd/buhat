@@ -38,3 +38,38 @@ export const createProfile = async (req, res, next) => {
         next(error)
     }
 }
+
+export const updateProfile = async (req, res, next) => {
+    try {
+        const { age, weight, height, description, activityLevel, weightGoal } = req.body;
+        const profileId = req.params.profileId;
+
+        let profile = await Profile.findById(profileId);
+
+        if (!profile) {
+            return res.status(404).json({ message: "Profile not found" });
+        }
+
+        if (profile.createdBy.toString() !== req.user.userId) {
+            return res.status(403).json({ message: "You are not authorized to update this profile" });
+        }
+
+        const fieldsToUpdate = { age, weight, height, description, activityLevel, weightGoal };
+
+        for (let field in fieldsToUpdate) {
+            if (fieldsToUpdate[field] !== undefined) {
+                profile[field] = fieldsToUpdate[field];
+            }
+        }
+
+        if (weight) {
+            profile.weightLogs.push(weight);
+        }
+
+        profile = await profile.save();
+
+        res.status(200).json({ profile });
+    } catch (error) {
+        next(error);
+    }
+};
