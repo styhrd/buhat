@@ -9,7 +9,7 @@ import authRoutes from './routes/authRoutes.js'
 import errorMiddleware from "./middleware/errorMiddleware.js";
 import profileRoutes from './routes/profileRoutes.js'
 import workoutRoutes from './routes/workoutRoutes.js'
-
+import exerciseRoutes from './routes/exerciseRoutes.js'
 
 
 dotenv.config();
@@ -27,7 +27,7 @@ app.use(morgan('dev'))
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/profile", profileRoutes)
 app.use("/api/v1/workout", workoutRoutes)
-
+app.use("/api/v1/exercise", exerciseRoutes)
 app.use(errorMiddleware)
 
 

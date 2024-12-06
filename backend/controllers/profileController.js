@@ -5,7 +5,7 @@ export const createProfile = async (req, res, next) => {
     try {
         const { age, weight, height, description, activityLevel, weightGoal, weightLogs } = req.body;
 
-        if (!age || !weight || !height || !description || !activityLevel || !weightGoal) {
+        if (!age || !weight || !height || !description || !activityLevel || !weightGoal||!workout) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required",
