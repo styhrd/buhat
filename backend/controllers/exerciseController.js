@@ -4,9 +4,9 @@ import Workout from '../models/workoutModel.js'
 
 export const createExercise = async (req, res, next) => {
     try {
-        const {sets,reps,weight,weightLogs,note,target,workoutId } = req.body
+        const {sets,reps,weight,weightLogs,note,target,workoutId,name } = req.body
 
-        if (!sets || !reps || !weight || !note || !target) {
+        if (!sets || !reps || !weight || !note || !target||!name) {
             return res.status(404).json({
                 success: false,
                 message:"All fields are required"
@@ -14,6 +14,7 @@ export const createExercise = async (req, res, next) => {
         }
 
         const exercise = await Exercise.create({
+            name,
             sets,
             reps,
             weight,
@@ -43,7 +44,7 @@ export const createExercise = async (req, res, next) => {
 
 export const updateExercise = async (req, res, next) => {
     try {
-        const { sets, reps, weight, note, target } = req.body;
+        const { sets, reps, weight, note, target,name } = req.body;
         const exerciseId = req.params.exerciseId;
 
         let exercise = await Exercise.findById(exerciseId);
@@ -71,6 +72,10 @@ export const updateExercise = async (req, res, next) => {
         }
         if (target !== undefined) {
             exercise.target = target;
+        }
+
+        if (name !== undefined) {
+            exercise.name = name;
         }
 
         
