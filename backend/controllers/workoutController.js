@@ -1,13 +1,14 @@
 import User from "../models/userModel.js"
 import Workout from "../models/workoutModel.js"
+import Exercise from '../models/exerciseModel.js'
 
 
 export const shareWorkout = async (req, res, next) => {
     try {
         const code = req.params.code;
 
-        // Find the workout by code
-        const originalWorkout = await Workout.findOne({ code: code }).populate('exercises'); // Include exercises
+        // Find the workout by code and populate exercises
+        const originalWorkout = await Workout.findOne({ code }).populate('exercises');
         if (!originalWorkout) {
             return res.status(404).json({
                 success: false,
@@ -43,21 +44,26 @@ export const shareWorkout = async (req, res, next) => {
         // Duplicate the exercises
         const newExercises = await Promise.all(
             originalWorkout.exercises.map(async (exercise) => {
-                const newExercise = await Exercise.create({
-                    sets: exercise.sets,
-                    reps: exercise.reps,
-                    weight: exercise.weight,
-                    weightLogs: exercise.weightLogs,
-                    note: exercise.note,
-                    target: exercise.target,
+                // Ensure all required fields are available
+                if (!exercise.name) {
+                    throw new Error(`Exercise name is missing for exercise ID: ${exercise._id}`);
+                }
+
+                return await Exercise.create({
+                    name: exercise.name,
+                    sets: exercise.sets || 0,
+                    reps: exercise.reps || 0,
+                    weight: exercise.weight || 0,
+                    weightLogs: exercise.weightLogs || [],
+                    note: exercise.note || "",
+                    target: exercise.target || "",
                     workoutId: newWorkout._id, // Associate with the new workout
                 });
-                return newExercise._id; // Return the new exercise ID
             })
         );
 
         // Update the new workout with the duplicated exercises
-        newWorkout.exercises = newExercises;
+        newWorkout.exercises = newExercises.map(exercise => exercise._id);
         await newWorkout.save();
 
         // Add the new workout to the user's workoutsIds
@@ -71,9 +77,11 @@ export const shareWorkout = async (req, res, next) => {
             data: newWorkout,
         });
     } catch (error) {
-        next(error);
+        console.error(error); // Log the error for debugging
+        next(error); // Pass the error to the error-handling middleware
     }
 };
+
 
 
 export const createWorkout = async (req, res, next) => {
