@@ -111,6 +111,34 @@ export const exerciseGetbyId = async (req, res, next) => {
     }
 }
 
-//getbyId
+export const deleteExercise = async (req, res, next) => {
+    try {
+        const exerciseId = req.params.exerciseId
+        const exercise = await Exercise.findOne({ _id: exerciseId });
+        console.log(Exercise);
+        
+        
+        
+        if (!exercise) {
+                 return res.status(404).json({
+                    success: false,
+                    message: "Exercise not found",
+                });
+        }
+        
+        await exercise.deleteOne()
+        await Workout.findByIdAndUpdate(
+            exercise.workoutId,
+            {$pull:{exercises:exerciseId}}
+        )
+
+        res.status(200).json({
+            success: true,
+            message: "Exercise Deleted successfully",
+        });
+    } catch (error) {
+        next(error)
+    }
+}
 //getAllexercises
 //delete
