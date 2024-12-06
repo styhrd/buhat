@@ -73,3 +73,28 @@ export const loginController = async (req, res, next) => {
         });
     }
 };
+
+
+export const getUserById = async (req, res, next)=>{
+    try {
+        const userId = req.params.userId
+
+        let user = await userModel.findById(userId)
+
+        if (!user) {
+             return res.status(404).json({
+                success: false,
+                message: "User Not Found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "User Feteched successfully",
+            data: user,
+        });
+
+    } catch (error) {
+        next(error)
+    }
+}

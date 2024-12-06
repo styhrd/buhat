@@ -1,6 +1,6 @@
 import express from 'express'
 import userAuth from '../middleware/authMiddleware.js'
-import { createWorkout, deleteWorkout, getAllWorkouts, getWorkout, updateWorkout } from '../controllers/workoutController.js'
+import { createWorkout, deleteWorkout, getAllWorkouts, getWorkout, shareWorkout, updateWorkout } from '../controllers/workoutController.js'
 
 const router = express.Router()
 
@@ -10,5 +10,5 @@ router.get('/get/:workoutId', userAuth,getWorkout)
 router.post('/create', userAuth, createWorkout)
 router.get('/getAll', userAuth, getAllWorkouts)
 router.delete('/delete/:workoutId', userAuth, deleteWorkout)
-
+router.post('/share/:code', userAuth, shareWorkout)
 export default router
