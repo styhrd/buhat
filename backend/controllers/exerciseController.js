@@ -141,4 +141,29 @@ export const deleteExercise = async (req, res, next) => {
     }
 }
 //getAllexercises
-//delete
+
+
+export const getAllexercises = async (req, res, next) => {
+    try {
+        const workoutId = req.params.workoutId
+        const exercises = await Exercise.find({ workoutId: workoutId })
+        
+         if (exercises.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: "No exercises found",
+                data: [],
+            });
+        }
+
+
+        res.status(200).json({
+            success: true,
+            message: "Exercises retrieved successfully",
+            data: exercises,
+        });
+
+    } catch (error) {
+        next(error)
+    }
+}
