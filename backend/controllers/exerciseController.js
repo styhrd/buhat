@@ -35,6 +35,82 @@ export const createExercise = async (req, res, next) => {
         })
         
     } catch (error) {
+        next(error)
+    }
+
+}
+
+
+export const updateExercise = async (req, res, next) => {
+    try {
+        const { sets, reps, weight, note, target } = req.body;
+        const exerciseId = req.params.exerciseId;
+
+        let exercise = await Exercise.findById(exerciseId);
+
+        if (!exercise) {
+            return res.status(404).json({
+                success: false,
+                message: "Exercise Not Found",
+            });
+        }
+
+    
+        if (sets !== undefined) {
+            exercise.sets = sets;
+        }
+        if (reps !== undefined) {
+            exercise.reps = reps;
+        }
+        if (weight !== undefined) {
+            exercise.weight = weight;
+            exercise.weightLogs.push(weight); 
+        }
+        if (note !== undefined) {
+            exercise.note = note;
+        }
+        if (target !== undefined) {
+            exercise.target = target;
+        }
+
         
+        exercise = await exercise.save();
+
+        
+        res.status(200).json({
+            success: true,
+            message: "Exercise updated successfully",
+            data: exercise,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const exerciseGetbyId = async (req, res, next) => {
+    try {
+        const exerciseId = req.params.exerciseId
+
+        let exercise = await Exercise.findById(exerciseId);
+
+        if (!exercise) {
+            return res.status(404).json({
+                success: false,
+                message: "Exercise Not Found",
+            });
+        }
+
+         res.status(200).json({
+            success: true,
+            message: "Exercise Feteched successfully",
+            data: exercise,
+        });
+
+    } catch (error) {
+        next(error)
     }
 }
+
+//getbyId
+//getAllexercises
+//delete
