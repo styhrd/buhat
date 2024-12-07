@@ -36,3 +36,35 @@ export const createExe = async (req, res, next) => {
         next(error)
     }
 }
+
+
+export const updateRun = async (req, res, next) => {
+    try {
+        const { runId } = req.params; 
+        const { distance, time,name } = req.body; 
+
+        
+        const run = await Running.findById(runId);
+        if (!run) {
+            return res.status(404).json({
+                success: false,
+                message: "Run not found.",
+            });
+        }
+
+      
+        if (distance !== undefined) run.distance = distance;
+        if (time !== undefined) run.time = time;
+        if (name !== undefined) run.name = name;
+        
+        await run.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Run updated successfully.",
+            data: run,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
