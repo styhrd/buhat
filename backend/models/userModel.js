@@ -41,19 +41,19 @@ const userSchema = new mongoose.Schema({
         ref: 'Running'  // Reference to the Running model
     }],
 
-    posts: {
+    posts:[ {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Post"
             
-        },
-    likes: {
+        }],
+    likes: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "Post"
-        },
-    savedPosts: {
+        }],
+    savedPosts:[ {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Post"
-        },
+        }],
 
 });
 
