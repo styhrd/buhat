@@ -94,3 +94,59 @@ export const getPostId = async (req, res, next) => {
     }
 }
 
+export const deletePost = async (req, res, next) => {
+    try {
+         const postId = req.params.postId
+        const post = await Post.findById(postId)
+
+        if (!post) {
+             return res.status(200).json({
+                success: false,
+                message:"Post Not Found"
+            })
+        }
+
+        await post.deleteOne()
+
+        await User.findByIdAndUpdate(
+            userId,
+            {
+                $pull: {
+                    posts:postId
+                }
+            }
+        )
+
+         res.status(200).json({
+            success: true,
+            message:"Post Deleted Successfully"
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getAllPosts = async (req, res, next) => {
+    try {
+        const userId = req.user.userId
+        const posts = await Post.find({
+            createdBy:userId
+        })
+
+        if (posts.length === 0) {
+                return res.status(200).json({
+                    success: true,
+                    message: "No Posts found",
+                    data: [],
+                });
+        }
+        
+        res.status(200).json({
+                success: true,
+                message: "Post retrieved successfully",
+                data: posts,
+            });
+    } catch (error) {
+        next(error)
+    }
+}
