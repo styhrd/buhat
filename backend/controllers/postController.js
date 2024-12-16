@@ -150,3 +150,25 @@ export const getAllPosts = async (req, res, next) => {
         next(error)
     }
 }
+
+export const likePost = async (req, res, next) => {
+    try {
+        const postId = req.params.postId;
+        const userId = req.user.userId;
+
+        const user = await User.findById(userId);
+
+        if (user.likes.includes(postId)) {
+            user.posts.pull(postId);
+        } else {
+            user.posts.push(postId);
+        }
+
+        await user.save();
+
+        res.status(200).json({ success: true, message: "Post updated successfully." });
+    } catch (error) {
+        next(error);
+    }
+};
+
