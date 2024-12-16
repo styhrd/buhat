@@ -41,4 +41,34 @@ export const createPost = async (req, res, next) => {
     }
 }
 
-export const 
+export const updatePost = async (req, res, next)=> {
+    try {
+        const { postId } = req.params
+        const { title, description } = req.body
+        
+        const post = await Post.findById(postId)
+
+        if (!post) {
+             return res.status(404).json({
+                success: false,
+                message: "Post not found.",
+            });
+        }
+
+        if (title !== undefined) post.title = title;
+        if (description !== undefined) post.description = description;
+       
+        await post.save()
+
+        res.status(200).json({
+            success: true,
+            message: "Post updated successfully.",
+            data: post,
+        });
+
+
+    } catch (error) {
+        next(error)
+    }
+}
+
