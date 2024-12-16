@@ -68,3 +68,26 @@ export const updateRun = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getRunId = async (req, res, next) => {
+    try {
+        const runId = req.params.runId
+        let run = await Running.findById(runId)
+
+        if (!run) {
+            return res.status(200).json({
+                success: false,
+                message:"Run Not Found"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Run Feteched",
+            data:run
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
