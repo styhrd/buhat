@@ -91,3 +91,62 @@ export const getRunId = async (req, res, next) => {
     }
 }
 
+export const deleteRun = async (req, res, next) => {
+    try {
+        const runId = req.params.runId
+        const userId = req.user.userId
+        let run = await Running.findById(runId)
+
+        if (!run) {
+            return res.status(404).json({
+                success: false,
+                message: "Run not found",
+            });
+        }
+
+        await run.deleteOne()
+
+        await User.findByIdAndUpdate(
+            userId,
+            {$pull:{runningIds:runId
+                
+            }}
+        )
+
+        res.status(200).json({
+            success: true,
+            message:"Run Deleted Successfully"
+        })
+
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+export const getAllRun = async (req, res, next) => {
+    try {
+        const userId = req.user.userId
+        const runs = await Running.find({
+            createdBy:userId
+        })
+    
+        if (runs.length === 0) {
+                return res.status(200).json({
+                    success: true,
+                    message: "No Runs found",
+                    data: [],
+                });
+        }
+        
+        res.status(200).json({
+                success: true,
+                message: "Runs retrieved successfully",
+                data: runs,
+            });
+    } catch (error) {
+        next(error)
+    }
+}
+
