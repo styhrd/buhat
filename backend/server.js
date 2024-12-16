@@ -11,6 +11,7 @@ import profileRoutes from './routes/profileRoutes.js'
 import workoutRoutes from './routes/workoutRoutes.js'
 import exerciseRoutes from './routes/exerciseRoutes.js'
 import runningRoutes from './routes/runningRoutes.js'
+import postRoutes from './routes/postRoutes.js'
 
 dotenv.config();
 connectDB()
@@ -28,7 +29,8 @@ app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/profile", profileRoutes)
 app.use("/api/v1/workout", workoutRoutes)
 app.use("/api/v1/exercise", exerciseRoutes)
-app.use("/api/v1/run",runningRoutes)
+app.use("/api/v1/run", runningRoutes)
+app.use("/api/v1/community",postRoutes)
 app.use(errorMiddleware)
 
 
