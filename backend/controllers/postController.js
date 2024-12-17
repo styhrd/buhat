@@ -195,14 +195,51 @@ export const savePost = async (req, res, next) => {
 
 export const getAllLikes = async (req, res, next) => {
     try {
-        const userId = req.user.userId
-        const likes = await User.likes
+        const userId = req.user.userId;
 
-        console.log(likes);
-        
+        // Find the user and populate the 'likes' array with post details
+        const user = await User.findById(userId).populate({
+            path: "likes", // The field to populate
+            model: "Post", // Reference the Post model
+        });
 
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
 
+        res.status(200).json({
+            success: true,
+            likes: user.likes, // Return full post details
+        });
     } catch (error) {
-        next(error)
+        next(error);
+    }
+};
+
+export const getSaved = async (req, res, next) => {
+    try {
+        const userId = req.user.userId
+
+        const user = await User.findById(userId).populate({
+            path: "savedPosts",
+            model:"Post"
+        })
+
+         if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            likes: user.savedPosts, // Return full post details
+        });
+    } catch (error) {
+       next(error) 
     }
 }
