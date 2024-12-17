@@ -1,6 +1,6 @@
 import express from 'express'
 import userAuth from '../middleware/authMiddleware.js'
-import { createPost, deletePost, getAllPosts, getPostId, likePost, updatePost } from '../controllers/postController.js'
+import { createPost, deletePost, getAllPosts, getPostId, likePost, savePost, updatePost } from '../controllers/postController.js'
 
 const router = express.Router()
 
@@ -12,4 +12,5 @@ router.delete('/deletePost/:postId', userAuth, deletePost)
 
 
 router.post('/like/:postId', userAuth, likePost)
+router.post('/save/:postId', userAuth, savePost)
 export default router

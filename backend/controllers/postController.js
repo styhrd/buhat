@@ -159,9 +159,9 @@ export const likePost = async (req, res, next) => {
         const user = await User.findById(userId);
 
         if (user.likes.includes(postId)) {
-            user.posts.pull(postId);
+            user.likes.pull(postId);
         } else {
-            user.posts.push(postId);
+            user.likes.push(postId);
         }
 
         await user.save();
@@ -172,3 +172,37 @@ export const likePost = async (req, res, next) => {
     }
 };
 
+export const savePost = async (req, res, next) => {
+    try {
+        const postId = req.params.postId;
+        const userId = req.user.userId;
+
+        const user = await User.findById(userId);
+
+        if (user.savedPosts.includes(postId)) {
+            user.savedPosts.pull(postId);
+        } else {
+            user.savedPosts.push(postId);
+        }
+
+        await user.save();
+
+        res.status(200).json({ success: true, message: "Post updated successfully." });
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getAllLikes = async (req, res, next) => {
+    try {
+        const userId = req.user.userId
+        const likes = await User.likes
+
+        console.log(likes);
+        
+
+
+    } catch (error) {
+        next(error)
+    }
+}
