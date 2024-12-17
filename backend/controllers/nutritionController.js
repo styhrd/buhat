@@ -70,4 +70,55 @@ export const updateFood = async (req, res, next) => {
     }
 }
 
+export const getFood = async (req, res, next) => {
+    try {
+        const foodId = req.params.foodId
+
+        let food = await Food.findById(foodId)
+
+        if (!food) {
+            return res.status(404).json({
+                success: false,
+                message:"Food not Found"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Food Fetched",
+            data:food
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const deleteFood = async (req, res, next) => {
+    try {
+        const foodId = req.params.foodId
+
+        let food = await Food.findById(foodId)
+
+        if (!food) {
+            return res.status(404).json({
+                success: false,
+                message:"Food not Found"
+            })
+        }
+
+        await food.deleteOne()
+
+        await Nutrition.findByIdAndUpdate(
+            food.nutritionId,
+            {$pull:{foodLogs:foodId}}
+        )
+
+        res.status(200).json({
+            success: true,
+            message: "Food Deleted successfully",
+        });
+    } catch (error) {
+        next(error)
+    }
+}
 
