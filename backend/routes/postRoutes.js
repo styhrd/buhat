@@ -15,4 +15,4 @@ router.post('/like/:postId', userAuth, likePost)
 router.post('/save/:postId', userAuth, savePost)
 router.get('/likes', userAuth, getAllLikes)
 router.get('/saved', userAuth, getSaved)
-export default router
+export default router 

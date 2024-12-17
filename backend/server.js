@@ -12,6 +12,7 @@ import workoutRoutes from './routes/workoutRoutes.js'
 import exerciseRoutes from './routes/exerciseRoutes.js'
 import runningRoutes from './routes/runningRoutes.js'
 import postRoutes from './routes/postRoutes.js'
+import nut
 
 dotenv.config();
 connectDB()

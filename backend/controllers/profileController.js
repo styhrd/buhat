@@ -1,11 +1,12 @@
 import Profile from '../models/profileModel.js'
 import User from '../models/userModel.js'
+import Nutrition from '../models/nutritionModel.js'
 
 export const createProfile = async (req, res, next) => {
     try {
         const { age, weight, height, description, activityLevel, weightGoal, weightLogs } = req.body;
 
-        if (!age || !weight || !height || !description || !activityLevel || !weightGoal||!workout) {
+        if (!age || !weight || !height || !description || !activityLevel || !weightGoal) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required",
@@ -28,6 +29,7 @@ export const createProfile = async (req, res, next) => {
             });
         }
 
+        // Create Profile
         const profile = await Profile.create({
             age,
             weight,
@@ -39,13 +41,22 @@ export const createProfile = async (req, res, next) => {
             createdBy: user._id,
         });
 
+        // Create Nutrition Document
+        const nutrition = await Nutrition.create({
+            profile: profile._id,
+            calorieMaintenance: 0,
+            createdBy:req.user.userId
+        });
+
+        // Update User with profileId and nutritionId
         user.profileId = profile._id;
+        user.nutritionId = nutrition._id;
         await user.save();
 
         res.status(201).json({
             success: true,
-            message: "Profile created successfully",
-            data: profile,
+            message: "Profile and Nutrition created successfully",
+            data: { profile, nutrition },
         });
     } catch (error) {
         next(error);

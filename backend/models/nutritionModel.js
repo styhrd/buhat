@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import Profile from './profileModel.js';  // Import the Profile model
+import Profile from './profileModel.js';
+import Food from './foodModel.js'
 
 const nutritionSchema = new mongoose.Schema({
     date: {
@@ -33,6 +34,11 @@ const nutritionSchema = new mongoose.Schema({
         type: Number,
         required: true  // This will be calculated based on user profile
     },
+    createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User', // Reference to the User model
+            required: true, // Ensure every profile is associated with a user
+        },
 
     // Reference the user's profile
     profile: {
@@ -45,7 +51,7 @@ const nutritionSchema = new mongoose.Schema({
 // Example pre-save hook for calculating caloriesConsumed and calorieMaintenance
 nutritionSchema.pre('save', async function (next) {
     // Populate foodLogs to access calories from referenced Food documents
-    await this.populate('foodLogs').execPopulate();
+    await this.populate('foodLogs')
 
     // Calculate total calories consumed from foodLogs
     this.caloriesConsumed = this.foodLogs.reduce((total, food) => total + food.calories, 0);

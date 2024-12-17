@@ -13,6 +13,11 @@ const foodSchema = new mongoose.Schema({
         type: String,
         enum: ['saved', 'not saved'],
         default: 'not saved'
+    },
+    nutritionId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Nutrition', // Reference to the User model
+        required: true, // Ensure every profile is associated with a user
     }
 });
 
