@@ -1,12 +1,12 @@
 import express from 'express'
-import userAuth from '../middleware/authMiddleware'
-import router from './profileRoutes'
-import { createNut } from '../controllers/nutritionController'
+import userAuth from '../middleware/authMiddleware.js'
+import { createFood, updateFood } from '../controllers/nutritionController.js'
+
 
 const router = express.Router()
 
 
-router.post('/create', userAuth,createNut)
-
+router.post('/createFood', userAuth,createFood)
+router.patch('/updateFood/:foodId', userAuth,updateFood)
 
 export default router

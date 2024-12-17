@@ -1,6 +1,6 @@
-import Nutrition from '../models/nutritionModel'
-import Food from '../models/foodModel'
-import User from '../models/userModel'
+import Nutrition from '../models/nutritionModel.js'
+import Food from '../models/foodModel.js'
+import User from '../models/userModel.js'
 
 export const createFood = async (req, res, next) => {
     try {
@@ -16,7 +16,7 @@ export const createFood = async (req, res, next) => {
         }
 
         const food = await Food.create({
-            name,calories
+            name,calories,nutritionId
         })
 
         let nutrition = await Nutrition.findById(nutritionId)
@@ -30,6 +30,40 @@ export const createFood = async (req, res, next) => {
             message: "Food Created",
              data: food,
             
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const updateFood = async (req, res, next) => {
+    try {
+        const { name, calories } = req.body
+        const foodId = req.params.foodId
+        const user = await User.findById(req.user.userId)
+        const nutritionId = user.nutritionId
+        let nutrition = await Nutrition.findById(nutritionId)
+        
+
+        let food = await Food.findById(foodId)
+
+        if (!food) { 
+            return res.status(200).json({
+                success: false,
+                message:"Food Not Found"
+            })
+        }
+
+        if (name) food.name = name
+        if (calories) food.calories = calories
+        
+        food = await food.save()
+        await nutrition.save()
+
+        res.status(200).json({
+            success: true,
+            message: "Food Updated",
+            data:food
         })
     } catch (error) {
         next(error)
