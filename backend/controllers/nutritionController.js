@@ -122,3 +122,32 @@ export const deleteFood = async (req, res, next) => {
     }
 }
 
+export const getAllFood = async (req, res, next) => {
+    try {
+        const userId = req.user.userId
+        const user = await User.findById(userId)
+    
+        const nutritionId = user.nutritionId
+
+        const foods = await Food.find({ nutritionId: nutritionId })
+        
+        if (foods.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: "No food found",
+                data: [],
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Food retrieved successfully",
+            data: foods,
+        });
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+
