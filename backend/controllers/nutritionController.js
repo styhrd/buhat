@@ -150,4 +150,34 @@ export const getAllFood = async (req, res, next) => {
 
 }
 
+export const saveFood = async (req, res, next) => {
+    try {
+        const foodId = req.params.foodId
+        console.log(foodId);
+        
+        const user = await User.findById(req.user.userId)
+        const nutritionId = user.nutritionId
+        const nutrition = await Nutrition.findById(nutritionId)
+        
+        
+        if (nutrition.savedFoods.includes(foodId)) {
+            nutrition.savedFoods.pull(foodId)
+        } else {
+            nutrition.savedFoods.push(foodId)
+            
+        }
+
+        await nutrition.save()
+
+        res.status(200).json({
+            success: true,
+            message:"Food Saved"
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
 
