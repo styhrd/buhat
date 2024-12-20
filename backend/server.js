@@ -42,23 +42,31 @@ app.listen(PORT, () => {
 
 cron.schedule('0 0 * * *', async () => {
     try {
-        // Find all nutrition records for the current day
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Set time to midnight
+        // Get the start and end of the current day
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
 
-        const nutritionLogs = await Nutrition.find({ date: today });
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
 
-        // Reset caloriesConsumed and foodLogs for each entry
-        for (const log of nutritionLogs) {
-            log.caloriesConsumed = 0;
-            log.foodLogs = [];
-            log.date = new Date(); // Set new date for the next day
-
-            await log.save(); // Save the updated log
-        }
+        // Reset the caloriesConsumed and foodLogs for all Nutrition logs
+        await Nutrition.updateMany(
+            {
+                date: { $gte: startOfDay, $lt: endOfDay },
+           },
+            {
+                $set: {
+                    caloriesConsumed: 0,
+                    foodLogs: [],
+                    date: new Date(), // Set the date to the current timestamp
+                },
+            }
+        );
 
         console.log('Nutrition logs reset for the day.');
     } catch (error) {
         console.error('Error resetting nutrition logs:', error);
     }
 });
+
+

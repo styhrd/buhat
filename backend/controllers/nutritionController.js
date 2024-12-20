@@ -175,7 +175,7 @@ export const saveFood = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-}
+} 
 
 export const getSavedFood = async (req, res, next)=> {
     try {
@@ -187,7 +187,6 @@ export const getSavedFood = async (req, res, next)=> {
             model:"Food"
         })
 
-        console.log(nutrition);
         
 
         if (!nutrition) {
@@ -200,7 +199,7 @@ export const getSavedFood = async (req, res, next)=> {
 
         res.status(200).json({
             success: true,
-            likes: nutrition.savedFoods, // Return full post details
+            likes: nutrition.savedFoods, 
         });
     } catch (error) {
         next(error)
