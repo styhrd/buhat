@@ -153,8 +153,6 @@ export const getAllFood = async (req, res, next) => {
 export const saveFood = async (req, res, next) => {
     try {
         const foodId = req.params.foodId
-        console.log(foodId);
-        
         const user = await User.findById(req.user.userId)
         const nutritionId = user.nutritionId
         const nutrition = await Nutrition.findById(nutritionId)
@@ -179,5 +177,33 @@ export const saveFood = async (req, res, next) => {
     }
 }
 
+export const getSavedFood = async (req, res, next)=> {
+    try {
 
+        const user = await User.findById(req.user.userId)
+        const nutritionId = user.nutritionId
+        const nutrition = await Nutrition.findById(nutritionId).populate({
+            path: "savedFoods",
+            model:"Food"
+        })
+
+        console.log(nutrition);
+        
+
+        if (!nutrition) {
+             return res.status(404).json({
+                success: false,
+                message: "Nutrition not found",
+            });
+        }
+
+
+        res.status(200).json({
+            success: true,
+            likes: nutrition.savedFoods, // Return full post details
+        });
+    } catch (error) {
+        next(error)
+    }
+}
 
